@@ -2,13 +2,6 @@
 # from .ping.open import ping as ping_opendevice
 # from .ping.ins2000 import ping as ping_ins2000
 from .ping import ping_tool
-from .openimu.uart_provider import Provider as OpenIMUUartProvider
-from .openrtk.uart_provider import Provider as OpenRTKUartProvider
-from .rtkl.uart_provider import Provider as RTKLUartProvider
-from .openrtk.lan_provider import Provider as OpenRTKLANProvider
-from .dmu.uart_provider import Provider as DMUUartProvider
-from .ins2000.uart_provider import Provider as INS2000UartProvider
-from .openrtk.ethernet_provider import Provider as INS401EthernetProvider
 from ..framework.context import APP_CONTEXT
 from ..framework.utils.print import print_green
 from ..framework.constants import INTERFACES
@@ -16,22 +9,29 @@ from ..framework.constants import INTERFACES
 def create_provider(device_type, communicator):
     if communicator.type == INTERFACES.UART:
         if device_type == 'OpenIMU':
+            from .openimu.uart_provider import Provider as OpenIMUUartProvider
             return OpenIMUUartProvider(communicator)
         if device_type == 'OpenRTK':
+            from .openrtk.uart_provider import Provider as OpenRTKUartProvider
             return OpenRTKUartProvider(communicator)
         if device_type == 'RTKL':
+            from .rtkl.uart_provider import Provider as RTKLUartProvider
             return RTKLUartProvider(communicator)
         if device_type == 'DMU':
+            from .dmu.uart_provider import Provider as DMUUartProvider
             return DMUUartProvider(communicator)
         if device_type == 'INS2000':
+            from .ins2000.uart_provider import Provider as INS2000UartProvider
             return INS2000UartProvider(communicator)
 
     if communicator.type == INTERFACES.ETH:
         if device_type == 'OpenRTK':
+            from .openrtk.lan_provider import Provider as OpenRTKLANProvider
             return OpenRTKLANProvider(communicator)
 
     if communicator.type==INTERFACES.ETH_100BASE_T1:
         if device_type == 'INS401':
+            from .openrtk.ethernet_provider import Provider as INS401EthernetProvider
             return INS401EthernetProvider(communicator)
 
     return None
