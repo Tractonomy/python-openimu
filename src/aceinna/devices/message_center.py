@@ -5,7 +5,7 @@ import threading
 import datetime
 import time
 
-from aceinna.framework.context import APP_CONTEXT
+from ..framework.context import APP_CONTEXT
 from .base import EventBase
 from ..framework.utils import helper
 from ..framework.constants import INTERFACES
