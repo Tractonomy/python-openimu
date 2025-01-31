@@ -1,6 +1,5 @@
 import time
 import collections
-from scapy.all import sendp, conf, AsyncSniffer
 from ..constants import (BAUDRATE_LIST, INTERFACES)
 from ..utils.print import (print_red)
 from ..utils import helper
@@ -94,17 +93,18 @@ class Ethernet(Communicator):
         else:
             print_red(
                 'Cannot confirm the device in ethernet 100base-t1 connection')
-
     def send_async_shake_hand(self, iface, dst_mac, src_mac, filter, use_length_as_protocol):
         pG = [0x01, 0xcc]
         command = helper.build_ethernet_packet(
             dst_mac, src_mac, pG, use_length_as_protocol=use_length_as_protocol)
+        from scapy.all import AsyncSniffer
         async_sniffer = AsyncSniffer(
             iface=iface,
             prn=self.handle_iface_confirm_packet,
             filter=filter)
         async_sniffer.start()
         time.sleep(0.2)
+        from scapy.all import sendp
         sendp(command.actual_command, iface=iface, verbose=0)
         time.sleep(0.5)
         async_sniffer.stop()
@@ -151,7 +151,7 @@ class Ethernet(Communicator):
         hard_code_mac = '04:00:00:00:00:04'
         filter_exp = 'ether src host {0} or {1}'.format(
             self.dst_mac, hard_code_mac)
-
+        from scapy.all import AsyncSniffer
         self.async_sniffer = AsyncSniffer(
             iface=self.iface, prn=self.handle_recive_packet, filter=filter_exp, store=0)
         self.async_sniffer.start()
@@ -216,6 +216,7 @@ class Ethernet(Communicator):
         return bytes([int(x, 16) for x in self.dst_mac.split(':')])
 
     def get_network_card(self):
+        from scapy.all import conf
         network_card_info = []
         for item in conf.ifaces:
             if conf.ifaces[item].ip == '127.0.0.1' or conf.ifaces[item].mac == '':

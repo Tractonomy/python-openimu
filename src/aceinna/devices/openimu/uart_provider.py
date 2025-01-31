@@ -9,7 +9,6 @@ import math
 import datetime
 import threading
 import struct
-from azure.storage.blob import BlockBlobService
 from ...framework.utils import helper
 from ...framework.utils import resource
 from ..base import OpenDeviceBase
@@ -899,6 +898,7 @@ class Provider(OpenDeviceBase):
             sas_token = self.ans_platform.get_sas_token()
             if sas_token == '':
                 raise Exception('cannot get sas token')
+            from azure.storage.blob import BlockBlobService
             self.block_blob_service = BlockBlobService(account_name=account_name,
                                                        sas_token=sas_token,
                                                        protocol='http')

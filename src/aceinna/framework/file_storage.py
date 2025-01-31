@@ -6,8 +6,6 @@ import datetime
 import json
 import threading
 import requests
-from azure.storage.blob import AppendBlobService
-from azure.storage.blob import ContentSettings
 from .utils import resource
 from .configuration import get_config
 from .ans_platform_api import AnsPlatformAPI
@@ -181,12 +179,14 @@ class FileLoger():
                 time.sleep(1)
                 continue
 
+            from azure.storage.blob import AppendBlobService
             # create blob on azure
             if not bcreate_blob_ok:
                 try:
                     self.append_blob_service = AppendBlobService(account_name=account_name,
                                                                  sas_token=self.sas_token,
                                                                  protocol='http')
+                    from azure.storage.blob import ContentSettings
                     self.append_blob_service.create_blob(container_name=container_name, blob_name=url_name,
                                                          content_settings=ContentSettings(content_type='text/plain'))
                     bcreate_blob_ok = True

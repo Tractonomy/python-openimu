@@ -7,7 +7,6 @@ import time
 import struct
 import traceback
 from pathlib import Path
-from azure.storage.blob import BlockBlobService
 from . import EventBase
 from ...framework.context import APP_CONTEXT
 from ...framework.utils import (helper, resource)
@@ -16,7 +15,6 @@ from ...framework.configuration import get_config
 from ...framework.ans_platform_api import AnsPlatformAPI
 from ...framework.progress_bar import ProgressBar
 from ...framework.constants import INTERFACES
-from ..message_center import (DeviceMessageCenter, EVENT_TYPE)
 from ..parser_manager import ParserManager
 from ..upgrade_center import UpgradeCenter
 
@@ -117,8 +115,9 @@ class OpenDeviceBase(EventBase):
 
     def _setup_message_center(self):
         if not self._message_center:
+            from ..message_center import DeviceMessageCenter
             self._message_center = DeviceMessageCenter(self.communicator)
-
+        from ..message_center import (EVENT_TYPE)
         if not self._message_center.is_ready():
             parser = ParserManager.build(
                 self.type, self.communicator.type, self.properties)
@@ -324,6 +323,7 @@ class OpenDeviceBase(EventBase):
         if firmware_file.is_file():
             firmware_content = open(firmware_file_path, 'rb').read()
         else:
+            from azure.storage.blob import BlockBlobService
             self.block_blob_service = BlockBlobService(
                 account_name=config.AZURE_STORAGE_ACCOUNT, protocol='https')
             self.block_blob_service.get_blob_to_path(
